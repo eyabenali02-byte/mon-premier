@@ -1,81 +1,13 @@
-/* ============================================================
-   MES COURS
-   ============================================================ */
+/* ============ MES COURS ============ */
 const mesCours = [
-    {
-        titre: "Nom du cours",
-        matiereNom: "Matière",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "Mathématique",
-        matiereNom: "Algèbre",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "Algorithmique - Structures de données",
-        matiereNom: "ASD",
-        description: "",
-        chapitres: [
-            { titre: "notion de base ", fichier: "coursalgo.pdf" },
-            { titre: " ", fichier: "" }
-        ]
-    },
-    {
-        titre: "Atelier de programmation",
-        matiereNom: "Language C",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" },
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "Électricité électronique",
-        matiereNom: "Département de Physique ",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "Propagation et rayonnement",
-        matiereNom: "Département de Physique ",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "Système logique",
-        matiereNom: " Département de Physique ",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "Français",
-        matiereNom: "Technique de communication",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    },
-    {
-        titre: "anglais",
-        matiereNom: "anglais ",
-        description: "",
-        chapitres: [
-            { titre: "", fichier: "" }
-        ]
-    }
+    { titre: "Nom du cours", matiereNom: "Matière", description: "", chapitres: [{ titre: "", fichier: "" }] },
+    { titre: "Mathématique", matiereNom: "Algèbre", description: "", chapitres: [{ titre: "", fichier: "" }] },
+    { titre: "Algorithmique - Structures de données", matiereNom: "ASD", description: "", chapitres: [{ titre: "notion de base", fichier: "coursalgo.pdf" }, { titre: "", fichier: "" }] },
+    { titre: "Atelier de programmation", matiereNom: "Language C", description: "", chapitres: [{ titre: "", fichier: "" }, { titre: "", fichier: "" }] },
+    { titre: "Électricité électronique", matiereNom: "Département de Physique", description: "", chapitres: [{ titre: "", fichier: "" }] },
+    { titre: "Propagation et rayonnement", matiereNom: "Département de Physique", description: "", chapitres: [{ titre: "", fichier: "" }] },
+    { titre: "Système logique", matiereNom: "Département de Physique", description: "", chapitres: [{ titre: "", fichier: "" }] },
+    { titre: "Français", matiereNom: "Technique de communication", description: "", chapitres: [{ titre: "", fichier: "" }] }
 ];
 
 const grille = document.getElementById('coursesGrid');
@@ -89,60 +21,36 @@ const modalListe = document.getElementById('modalListe');
 const modalFermer = document.getElementById('modalFermer');
 
 function chapitresValides(cours) {
-    return cours.chapitres.filter(chap =>
-        (chap.titre && chap.titre.trim() !== '') ||
-        (chap.fichier && chap.fichier.trim() !== '')
-    );
+    return cours.chapitres.filter(c => (c.titre && c.titre.trim()) || (c.fichier && c.fichier.trim()));
 }
 
 function initFiltre() {
     const matieres = [...new Set(mesCours.map(c => c.matiereNom))].sort();
-    matieres.forEach(matiere => {
-        const option = document.createElement('option');
-        option.value = matiere;
-        option.textContent = matiere;
-        filterSelect.appendChild(option);
+    matieres.forEach(m => {
+        const o = document.createElement('option');
+        o.value = m; o.textContent = m;
+        filterSelect.appendChild(o);
     });
 }
 
 function afficherCours(liste) {
     grille.innerHTML = '';
-
     if (liste.length === 0) {
         grille.innerHTML = '<p class="vide">Aucun cours trouvé 😕</p>';
         return;
     }
-
     liste.forEach(cours => {
         const carte = document.createElement('div');
         carte.className = 'carte';
         carte.tabIndex = 0;
         carte.setAttribute('role', 'button');
-
         const valides = chapitresValides(cours);
-        const compteur = valides.length > 0
-            ? `${valides.length} document${valides.length > 1 ? 's' : ''}`
-            : 'Bientôt disponible';
-
-        const descHTML = cours.description && cours.description.trim() !== ''
-            ? `<p>${cours.description}</p>`
-            : '';
-
-        carte.innerHTML = `
-            <h3>${cours.titre}</h3>
-            ${descHTML}
-            <span class="compteur">📄 ${compteur}</span>
-        `;
-
+        const compteur = valides.length > 0 ? `${valides.length} document${valides.length > 1 ? 's' : ''}` : 'Bientôt disponible';
+        const descHTML = cours.description && cours.description.trim() ? `<p>${cours.description}</p>` : '';
+        carte.innerHTML = `<h3>${cours.titre}</h3>${descHTML}<span class="compteur">📄 ${compteur}</span>`;
         const ouvrir = () => ouvrirModal(cours);
         carte.addEventListener('click', ouvrir);
-        carte.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                ouvrir();
-            }
-        });
-
+        carte.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ouvrir(); } });
         grille.appendChild(carte);
     });
 }
@@ -150,37 +58,27 @@ function afficherCours(liste) {
 function ouvrirModal(cours) {
     modalMatiere.textContent = cours.matiereNom;
     modalTitre.textContent = cours.titre;
-
-    if (cours.description && cours.description.trim() !== '') {
+    if (cours.description && cours.description.trim()) {
         modalDescription.textContent = cours.description;
         modalDescription.style.display = 'block';
     } else {
-        modalDescription.textContent = '';
-        modalDescription.style.display = 'none';
+        modalDescription.textContent = ''; modalDescription.style.display = 'none';
     }
-
     modalListe.innerHTML = '';
     const valides = chapitresValides(cours);
-
     if (valides.length === 0) {
         modalListe.innerHTML = '<p class="vide">Aucun document disponible pour l\'instant.</p>';
     } else {
         valides.forEach(chap => {
             const ligne = document.createElement('div');
             ligne.className = 'chapitre-ligne';
-
-            const lienHTML = chap.fichier && chap.fichier.trim() !== ''
+            const lienHTML = chap.fichier && chap.fichier.trim()
                 ? `<a href="${chap.fichier}" download>⬇️ Télécharger</a>`
                 : `<span class="indisponible">Bientôt disponible</span>`;
-
-            ligne.innerHTML = `
-                <span class="chapitre-nom">${chap.titre || ''}</span>
-                ${lienHTML}
-            `;
+            ligne.innerHTML = `<span class="chapitre-nom">${chap.titre || ''}</span>${lienHTML}`;
             modalListe.appendChild(ligne);
         });
     }
-
     modal.classList.add('ouvert');
     modalFermer.focus();
     document.body.style.overflow = 'hidden';
@@ -192,84 +90,51 @@ function fermerModal() {
 }
 
 modalFermer.addEventListener('click', fermerModal);
-modal.addEventListener('click', e => {
-    if (e.target === modal) fermerModal();
-});
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && modal.classList.contains('ouvert')) fermerModal();
-});
+modal.addEventListener('click', e => { if (e.target === modal) fermerModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('ouvert')) fermerModal(); });
 
 function filtrer() {
     const texte = searchInput.value.trim().toLowerCase();
     const matiere = filterSelect.value;
-
     const resultats = mesCours.filter(cours => {
-        const titresChapitres = chapitresValides(cours)
-            .map(c => c.titre.toLowerCase())
-            .join(' ');
-
-        const okTexte =
-            cours.titre.toLowerCase().includes(texte) ||
-            (cours.description || '').toLowerCase().includes(texte) ||
-            cours.matiereNom.toLowerCase().includes(texte) ||
-            titresChapitres.includes(texte);
-
+        const tc = chapitresValides(cours).map(c => c.titre.toLowerCase()).join(' ');
+        const okTexte = cours.titre.toLowerCase().includes(texte) || (cours.description || '').toLowerCase().includes(texte) || cours.matiereNom.toLowerCase().includes(texte) || tc.includes(texte);
         const okMatiere = matiere === 'all' || cours.matiereNom === matiere;
         return okTexte && okMatiere;
     });
-
     afficherCours(resultats);
 }
 
 searchInput.addEventListener('input', filtrer);
 filterSelect.addEventListener('change', filtrer);
-
 initFiltre();
 afficherCours(mesCours);
 
 
-/* ============================================================
-   FORUM ÉTUDIANT — sans mot de passe
-   ============================================================ */
-
+/* ============ FORUM ============ */
 const FORUM_STORAGE_KEY = "forum_messages";
-
 const forumPseudo = document.getElementById('forumPseudo');
 const forumMessage = document.getElementById('forumMessage');
 const forumPublierBtn = document.getElementById('forumPublierBtn');
 const forumMessages = document.getElementById('forumMessages');
 
 function lireMessages() {
-    try {
-        return JSON.parse(localStorage.getItem(FORUM_STORAGE_KEY)) || [];
-    } catch {
-        return [];
-    }
+    try { return JSON.parse(localStorage.getItem(FORUM_STORAGE_KEY)) || []; } catch { return []; }
 }
-
-function sauverMessages(messages) {
-    localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(messages));
-}
+function sauverMessages(m) { localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(m)); }
 
 function chargerMessages() {
     const messages = lireMessages();
     forumMessages.innerHTML = '';
-
     if (messages.length === 0) {
         forumMessages.innerHTML = '<p class="forum-vide">Aucun message pour l\'instant. Sois la première à écrire ! ✨</p>';
         return;
     }
-
     messages.slice().reverse().forEach(msg => {
         const div = document.createElement('div');
         div.className = 'message';
-
         const date = new Date(msg.date);
-        const dateStr = date.toLocaleString('fr-FR', {
-            day: '2-digit', month: '2-digit', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-
+        const dateStr = date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         div.innerHTML = `
             <button class="message-supprimer" title="Supprimer">✕</button>
             <div class="message-entete">
@@ -278,20 +143,14 @@ function chargerMessages() {
             </div>
             <div class="message-texte">${echapperHTML(msg.texte)}</div>
         `;
-
         div.querySelector('.message-supprimer').addEventListener('click', () => {
             const pseudoActuel = forumPseudo.value.trim() || "Anonyme";
-            if (msg.auteur !== pseudoActuel) {
-                alert("Tu ne peux supprimer que tes propres messages.");
-                return;
-            }
+            if (msg.auteur !== pseudoActuel) { alert("Tu ne peux supprimer que tes propres messages."); return; }
             if (confirm("Supprimer ce message ?")) {
-                const nouveaux = lireMessages().filter(m => m.id !== msg.id);
-                sauverMessages(nouveaux);
+                sauverMessages(lireMessages().filter(m => m.id !== msg.id));
                 chargerMessages();
             }
         });
-
         forumMessages.appendChild(div);
     });
 }
@@ -299,42 +158,23 @@ function chargerMessages() {
 forumPublierBtn.addEventListener('click', () => {
     const auteur = forumPseudo.value.trim() || "Anonyme";
     const texte = forumMessage.value.trim();
-
-    if (!texte) {
-        alert("Écris un message avant de publier 😊");
-        return;
-    }
-
+    if (!texte) { alert("Écris un message avant de publier 😊"); return; }
     const messages = lireMessages();
-    messages.push({
-        id: Date.now() + "_" + Math.random().toString(36).slice(2, 8),
-        auteur: auteur,
-        texte: texte,
-        date: new Date().toISOString()
-    });
+    messages.push({ id: Date.now() + "_" + Math.random().toString(36).slice(2, 8), auteur, texte, date: new Date().toISOString() });
     sauverMessages(messages);
-
     forumMessage.value = '';
     chargerMessages();
 });
 
 function echapperHTML(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
-
 chargerMessages();
 
 
-/* ============================================================
-   FIREBASE AUTHENTICATION — Connexion / Inscription
-   ============================================================ */
-
+/* ============ FIREBASE AUTH + PAIEMENT ============ */
 const loginScreen = document.getElementById('loginScreen');
+const waitingScreen = document.getElementById('waitingScreen');
 const siteContent = document.getElementById('siteContent');
 const authEmail = document.getElementById('authEmail');
 const authPassword = document.getElementById('authPassword');
@@ -344,6 +184,7 @@ const authTitle = document.getElementById('authTitle');
 const authSubtitle = document.getElementById('authSubtitle');
 const authSwitchText = document.getElementById('authSwitchText');
 const authSwitchLink = document.getElementById('authSwitchLink');
+const waitingLogoutBtn = document.getElementById('waitingLogoutBtn');
 
 let mode = "login";
 
@@ -385,19 +226,37 @@ function traduireErreur(code) {
 
 window.addEventListener('firebaseReady', () => {
     const auth = window.firebaseAuth;
+    const db = window.firebaseDb;
     const { 
-        createUserWithEmailAndPassword, 
-        signInWithEmailAndPassword, 
-        onAuthStateChanged, 
-        signOut 
+        createUserWithEmailAndPassword, signInWithEmailAndPassword,
+        onAuthStateChanged, signOut, doc, setDoc, getDoc 
     } = window.firebaseFunctions;
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            loginScreen.style.display = 'none';
-            siteContent.style.display = 'block';
+            // Vérifier si payé dans Firestore
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().paye === true) {
+                    // Payé → afficher le site
+                    loginScreen.style.display = 'none';
+                    waitingScreen.style.display = 'none';
+                    siteContent.style.display = 'block';
+                } else {
+                    // Pas payé → écran d'attente
+                    loginScreen.style.display = 'none';
+                    waitingScreen.style.display = 'flex';
+                    siteContent.style.display = 'none';
+                }
+            } catch (err) {
+                console.error("Erreur Firestore:", err);
+                loginScreen.style.display = 'none';
+                waitingScreen.style.display = 'flex';
+                siteContent.style.display = 'none';
+            }
         } else {
             loginScreen.style.display = 'flex';
+            waitingScreen.style.display = 'none';
             siteContent.style.display = 'none';
         }
     });
@@ -405,46 +264,33 @@ window.addEventListener('firebaseReady', () => {
     authBtn.addEventListener('click', async () => {
         const email = authEmail.value.trim();
         const password = authPassword.value;
-
-        if (!email || !password) {
-            authError.textContent = "Remplis tous les champs.";
-            return;
-        }
-
+        if (!email || !password) { authError.textContent = "Remplis tous les champs."; return; }
         try {
             if (mode === "login") {
                 await signInWithEmailAndPassword(auth, email, password);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                // Créer le doc Firestore
+                await setDoc(doc(db, "users", userCred.user.uid), {
+                    email: email,
+                    paye: false,
+                    dateInscription: new Date().toISOString()
+                });
             }
         } catch (err) {
             authError.textContent = traduireErreur(err.code);
         }
     });
 
-    authPassword.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') authBtn.click();
-    });
+    authPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') authBtn.click(); });
 
-    // Bouton déconnexion flottant
+    waitingLogoutBtn.addEventListener('click', async () => { await signOut(auth); });
+
+    // Bouton déconnexion flottant (sur le site)
     const logoutBtn = document.createElement('button');
     logoutBtn.textContent = "🚪 Se déconnecter";
-    logoutBtn.style.cssText = `
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.5rem 1rem;
-        background: #4a6cf7;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        z-index: 50;
-        font-size: 0.85rem;
-    `;
-    logoutBtn.addEventListener('click', async () => {
-        await signOut(auth);
-    });
+    logoutBtn.style.cssText = `position:fixed;top:1rem;right:1rem;padding:0.5rem 1rem;background:#4a6cf7;color:white;border:none;border-radius:8px;cursor:pointer;z-index:50;font-size:0.85rem;`;
+    logoutBtn.addEventListener('click', async () => { await signOut(auth); });
     document.body.appendChild(logoutBtn);
 
     mettreAJourAffichage();
