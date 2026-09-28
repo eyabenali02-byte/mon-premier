@@ -3,25 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Cours &  Mes TD corrigés avec Résumé</title>
+    <title>Cours & Mes TD corrigés avec Résumé</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ============================================ -->
-    <!-- ÉCRAN DE CONNEXION / INSCRIPTION (Firebase)  -->
-    <!-- ============================================ -->
+    <!-- ÉCRAN DE CONNEXION / INSCRIPTION -->
     <div id="loginScreen" class="login-screen">
         <div class="login-box">
             <h1 id="authTitle">🔐 Accès réservé</h1>
             <p id="authSubtitle">Connecte-toi pour accéder aux cours</p>
-
             <input type="email" id="authEmail" placeholder="Ton email" autocomplete="email">
             <input type="password" id="authPassword" placeholder="Ton mot de passe" autocomplete="current-password">
             <button id="authBtn">Se connecter</button>
-
             <p id="authError" class="login-error"></p>
-
             <p class="auth-switch">
                 <span id="authSwitchText">Pas encore de compte ?</span>
                 <a href="#" id="authSwitchLink">Créer un compte</a>
@@ -29,18 +24,28 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- CONTENU DU SITE (caché tant qu'on n'est pas connecté) -->
-    <!-- ============================================ -->
-    <div id="siteContent" style="display:none;">
+    <!-- ÉCRAN D'ATTENTE (compte non payé) -->
+    <div id="waitingScreen" class="login-screen" style="display:none;">
+        <div class="login-box">
+            <h1>⏳ Compte en attente</h1>
+            <p>Ton compte a bien été créé, mais il n'est pas encore activé.</p>
+            <div class="waiting-info">
+                <p><strong>Pour activer ton compte :</strong></p>
+                <p>1️⃣ Envoie <strong>20 DT</strong> via D17 au :<br><strong>XX XXX XXX</strong></p>
+                <p>2️⃣ Envoie la capture du virement sur WhatsApp au :<br><strong>XX XXX XXX</strong></p>
+                <p>3️⃣ Ton compte sera activé dans les 24h.</p>
+            </div>
+            <button id="waitingLogoutBtn">🚪 Se déconnecter</button>
+        </div>
+    </div>
 
-        <!-- EN-TÊTE -->
+    <!-- CONTENU DU SITE -->
+    <div id="siteContent" style="display:none;">
         <header>
-            <h1>📚 Cours &  Mes TD corrigés avec Résumé</h1>
+            <h1>📚 Cours & Mes TD corrigés avec Résumé</h1>
             <p>Pour aider les nouveaux étudiants LCE🎓</p>
         </header>
 
-        <!-- RECHERCHE -->
         <div class="recherche">
             <input type="text" id="searchInput" placeholder="🔍 Rechercher un cours...">
             <select id="filterSelect">
@@ -48,37 +53,30 @@
             </select>
         </div>
 
-        <!-- LISTE DES COURS -->
         <main>
             <h2>Mes cours disponibles</h2>
             <div id="coursesGrid" class="grille"></div>
         </main>
 
-        <!-- FORUM ÉTUDIANT -->
         <section class="forum-section" id="forum">
             <h2>💬 Forum des étudiants</h2>
             <p class="forum-intro">Posez vos questions, partagez vos astuces !</p>
-
             <div class="forum-publier">
                 <input type="text" id="forumPseudo" placeholder="Ton prénom / pseudo" maxlength="30">
                 <textarea id="forumMessage" placeholder="Écris ton message..." rows="3" maxlength="500"></textarea>
                 <button id="forumPublierBtn">📨 Publier</button>
             </div>
-
             <div id="forumMessages" class="forum-messages"></div>
         </section>
 
-        <!-- PIED DE PAGE -->
         <footer>
             <p>© 2025 Mes Cours - Fait avec amour ❤️</p>
         </footer>
-
     </div>
-    <!-- FIN CONTENU DU SITE -->
 
-    <!-- MODAL : détail d'un cours avec ses chapitres/fichiers -->
+    <!-- MODAL -->
     <div id="modal" class="modal">
-        <div class="modal-contenu" role="dialog" aria-modal="true" aria-labelledby="modalTitre">
+        <div class="modal-contenu" role="dialog" aria-modal="true">
             <button id="modalFermer" class="modal-fermer" aria-label="Fermer">✕</button>
             <span id="modalMatiere" class="matiere"></span>
             <h3 id="modalTitre"></h3>
@@ -87,20 +85,17 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- FIREBASE SDK                                  -->
-    <!-- ============================================ -->
+    <!-- FIREBASE SDK -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import { 
-        getAuth, 
-        createUserWithEmailAndPassword, 
-        signInWithEmailAndPassword, 
-        onAuthStateChanged, 
-        signOut 
+        getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+        onAuthStateChanged, signOut 
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+      import { 
+        getFirestore, doc, setDoc, getDoc 
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      // Ta configuration Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyCn9DpO3hcmRTsXIOsER9XqLDxeYa2owCY",
         authDomain: "monprojet-eaec8.firebaseapp.com",
@@ -113,19 +108,19 @@
 
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
+      const db = getFirestore(app);
 
       window.firebaseAuth = auth;
+      window.firebaseDb = db;
       window.firebaseFunctions = {
-        createUserWithEmailAndPassword,
-        signInWithEmailAndPassword,
-        onAuthStateChanged,
-        signOut
+        createUserWithEmailAndPassword, signInWithEmailAndPassword,
+        onAuthStateChanged, signOut,
+        doc, setDoc, getDoc
       };
 
       window.dispatchEvent(new Event('firebaseReady'));
     </script>
 
-    <!-- TON SCRIPT -->
     <script src="script.js"></script>
 </body>
 </html>
