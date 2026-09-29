@@ -126,33 +126,72 @@ function sauverMessages(m) { localStorage.setItem(FORUM_STORAGE_KEY, JSON.string
 function chargerMessages() {
     const messages = lireMessages();
     forumMessages.innerHTML = '';
+
     if (messages.length === 0) {
         forumMessages.innerHTML = '<p class="forum-vide">Aucun message pour l\'instant. Sois la première à écrire ! ✨</p>';
         return;
     }
+
     messages.slice().reverse().forEach(msg => {
         const div = document.createElement('div');
         div.className = 'message';
+
         const date = new Date(msg.date);
-        const dateStr = date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const dateStr = date.toLocaleString('fr-FR', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+
         div.innerHTML = `
             <button class="message-supprimer" title="Supprimer">✕</button>
             <div class="message-entete">
                 <span class="message-auteur">${echapperHTML(msg.auteur)}</span>
                 <span class="message-date">${dateStr}</span>
             </div>
-            <div class="message-texte">${echapperHTML(msg.texte)}</div>
+            <div class="message-texte">${formaterMentions(msg.texte)}</div>
         `;
+
         div.querySelector('.message-supprimer').addEventListener('click', () => {
             const pseudoActuel = forumPseudo.value.trim() || "Anonyme";
-            if (msg.auteur !== pseudoActuel) { alert("Tu ne peux supprimer que tes propres messages."); return; }
+            if (msg.auteur !== pseudoActuel) {
+                alert("Tu ne peux supprimer que tes propres messages.");
+                return;
+            }
             if (confirm("Supprimer ce message ?")) {
                 sauverMessages(lireMessages().filter(m => m.id !== msg.id));
                 chargerMessages();
             }
         });
+
+        // Rendre les mentions cliquables
+        div.querySelectorAll('.mention').forEach(mentionEl => {
+            mentionEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pseudo = mentionEl.dataset.pseudo;
+                // Pré-remplir le champ avec la mention
+                const texteActuel = forumMessage.value;
+                forumMessage.value = texteActuel + (texteActuel ? ' ' : '') + '@' + pseudo + ' ';
+                forumMessage.focus();
+            });
+        });
+
         forumMessages.appendChild(div);
     });
+}
+
+// 🔑 NOUVELLE FONCTION : détecte les @mentions et les stylise
+function formaterMentions(texte) {
+    // 1. Échapper le HTML pour la sécurité
+    let texteSecurise = echapperHTML(texte);
+
+    // 2. Remplacer les @nom par un span coloré
+    // Regex : @ suivi de lettres/chiffres/tirets/underscores
+    texteSecurise = texteSecurise.replace(
+        /@([a-zA-Z0-9À-ÿ_-]+)/g,
+        '<span class="mention" data-pseudo="$1">@$1</span>'
+    );
+
+    return texteSecurise;
 }
 
 forumPublierBtn.addEventListener('click', () => {
