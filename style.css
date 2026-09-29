@@ -472,3 +472,18 @@ footer {
     margin-top: 0.5rem;
 }
 #waitingLogoutBtn:hover { background: #dee2e6; }
+/* ===== MENTIONS @ ===== */
+.mention {
+    color: #4a6cf7;
+    font-weight: bold;
+    background: #eef2ff;
+    padding: 0.1rem 0.4rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.mention:hover {
+    background: #d6e0ff;
+    text-decoration: underline;
+}
