@@ -84,6 +84,19 @@
             <div id="modalListe" class="modal-liste"></div>
         </div>
     </div>
+        <!-- MODAL LECTEUR PDF -->
+    <div id="pdfModal" class="modal">
+        <div class="pdf-modal-contenu" role="dialog" aria-modal="true">
+            <div class="pdf-header">
+                <h3 id="pdfTitre">📄 Document</h3>
+                <button id="pdfFermer" class="modal-fermer" aria-label="Fermer">✕</button>
+            </div>
+            <div class="pdf-zone" oncontextmenu="return false;">
+                <iframe id="pdfViewer" src="" title="Lecteur PDF"></iframe>
+            </div>
+            <p class="pdf-note">🔒 Document protégé — Lecture seule</p>
+        </div>
+    </div>
 
     <!-- FIREBASE SDK -->
     <script type="module">
