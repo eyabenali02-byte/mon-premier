@@ -73,8 +73,8 @@ function ouvrirModal(cours) {
             const ligne = document.createElement('div');
             ligne.className = 'chapitre-ligne';
             const lienHTML = chap.fichier && chap.fichier.trim()
-                ? `<a href="${chap.fichier}" download>⬇️ Télécharger</a>`
-                : `<span class="indisponible">Bientôt disponible</span>`;
+    ? `<button class="btn-lire" data-fichier="${chap.fichier}" data-titre="${chap.titre || 'Document'}">👁️ Lire</button>`
+    : `<span class="indisponible">Bientôt disponible</span>`;
             ligne.innerHTML = `<span class="chapitre-nom">${chap.titre || ''}</span>${lienHTML}`;
             modalListe.appendChild(ligne);
         });
