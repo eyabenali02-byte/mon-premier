@@ -83,25 +83,75 @@ function ouvrirModal(cours) {
     modalFermer.focus();
     document.body.style.overflow = 'hidden';
 }
-// ============================================================
-// LECTEUR PDF INTÉGRÉ
-// ============================================================
+/* ============================================================
+   LECTEUR PDF INTÉGRÉ (PDF.js)
+   ============================================================ */
 const pdfModal = document.getElementById('pdfModal');
-const pdfViewer = document.getElementById('pdfViewer');
 const pdfTitre = document.getElementById('pdfTitre');
 const pdfFermer = document.getElementById('pdfFermer');
+const pdfCanvas = document.getElementById('pdfCanvas');
+const pdfPrev = document.getElementById('pdfPrev');
+const pdfNext = document.getElementById('pdfNext');
+const pdfPageInfo = document.getElementById('pdfPageInfo');
+const pdfZoomIn = document.getElementById('pdfZoomIn');
+const pdfZoomOut = document.getElementById('pdfZoomOut');
 
-function ouvrirPDF(fichier, titre) {
+let pdfDoc = null;
+let pdfPage = 1;
+let pdfScale = 1.2;
+let pdfRendering = false;
+let pdfPending = null;
+
+async function ouvrirPDF(fichier, titre) {
     pdfTitre.textContent = "📄 " + titre;
-    // Utilisation d'un blob pour cacher l'URL réelle
-    pdfViewer.src = fichier + "#toolbar=0&navpanes=0&scrollbar=1&view=FitH";
+    pdfPage = 1;
+    pdfScale = 1.2;
     pdfModal.classList.add('ouvert');
     document.body.style.overflow = 'hidden';
+
+    try {
+        pdfDoc = await pdfjsLib.getDocument(fichier).promise;
+        afficherPagePDF(pdfPage);
+    } catch (err) {
+        console.error("Erreur chargement PDF:", err);
+        pdfCanvas.parentElement.innerHTML = '<p style="color:white;padding:2rem;text-align:center;">❌ Impossible de charger le document.</p>';
+    }
+}
+
+function afficherPagePDF(num) {
+    if (pdfRendering) {
+        pdfPending = num;
+        return;
+    }
+    pdfRendering = true;
+
+    pdfDoc.getPage(num).then(page => {
+        const viewport = page.getViewport({ scale: pdfScale });
+        const ctx = pdfCanvas.getContext('2d');
+        pdfCanvas.height = viewport.height;
+        pdfCanvas.width = viewport.width;
+
+        const renderTask = page.render({ canvasContext: ctx, viewport: viewport });
+        return renderTask.promise;
+    }).then(() => {
+        pdfRendering = false;
+        pdfPageInfo.textContent = `Page ${pdfPage} / ${pdfDoc.numPages}`;
+        pdfPrev.disabled = (pdfPage <= 1);
+        pdfNext.disabled = (pdfPage >= pdfDoc.numPages);
+        if (pdfPending !== null) {
+            const p = pdfPending;
+            pdfPending = null;
+            afficherPagePDF(p);
+        }
+    }).catch(err => {
+        console.error("Erreur rendu:", err);
+        pdfRendering = false;
+    });
 }
 
 function fermerPDF() {
     pdfModal.classList.remove('ouvert');
-    pdfViewer.src = ''; // Libère la mémoire
+    pdfDoc = null;
     document.body.style.overflow = '';
 }
 
@@ -122,8 +172,33 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && pdfModal.classList.contains('ouvert')) fermerPDF();
 });
 
-// 🚫 Désactiver le clic droit sur le lecteur PDF
-pdfViewer.addEventListener('contextmenu', (e) => e.preventDefault());
+pdfPrev.addEventListener('click', () => {
+    if (pdfPage > 1) {
+        pdfPage--;
+        afficherPagePDF(pdfPage);
+    }
+});
+pdfNext.addEventListener('click', () => {
+    if (pdfPage < pdfDoc.numPages) {
+        pdfPage++;
+        afficherPagePDF(pdfPage);
+    }
+});
+pdfZoomIn.addEventListener('click', () => {
+    if (pdfScale < 3) {
+        pdfScale += 0.3;
+        afficherPagePDF(pdfPage);
+    }
+});
+pdfZoomOut.addEventListener('click', () => {
+    if (pdfScale > 0.5) {
+        pdfScale -= 0.3;
+        afficherPagePDF(pdfPage);
+    }
+});
+
+// Désactiver clic droit sur le PDF
+pdfCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
 function fermerModal() {
     modal.classList.remove('ouvert');
