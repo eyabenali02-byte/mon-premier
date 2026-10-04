@@ -85,18 +85,32 @@
         </div>
     </div>
         <!-- MODAL LECTEUR PDF -->
+      <!-- MODAL LECTEUR PDF (PDF.js) -->
     <div id="pdfModal" class="modal">
         <div class="pdf-modal-contenu" role="dialog" aria-modal="true">
             <div class="pdf-header">
                 <h3 id="pdfTitre">📄 Document</h3>
                 <button id="pdfFermer" class="modal-fermer" aria-label="Fermer">✕</button>
             </div>
+            <div class="pdf-toolbar">
+                <button id="pdfPrev" title="Page précédente">◀</button>
+                <span id="pdfPageInfo">Page 1 / 1</span>
+                <button id="pdfNext" title="Page suivante">▶</button>
+                <button id="pdfZoomIn" title="Zoom +">🔍+</button>
+                <button id="pdfZoomOut" title="Zoom -">🔍−</button>
+            </div>
             <div class="pdf-zone" oncontextmenu="return false;">
-                <iframe id="pdfViewer" src="" title="Lecteur PDF"></iframe>
+                <canvas id="pdfCanvas"></canvas>
             </div>
             <p class="pdf-note">🔒 Document protégé — Lecture seule</p>
         </div>
     </div>
+
+    <!-- PDF.js (bibliothèque Mozilla) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
 
     <!-- FIREBASE SDK -->
     <script type="module">
