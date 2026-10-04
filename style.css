@@ -487,6 +487,25 @@ footer {
     background: #d6e0ff;
     text-decoration: underline;
 }
+/* ===== BOUTON DÉCONNEXION FLOTTANT ===== */
+.logout-btn-flottant {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    background: #4a6cf7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 50;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.logout-btn-flottant:hover {
+    background: #3b5bdb;
+}
 /* ============================================================
    RESPONSIVE MOBILE — écrans < 768px
    ============================================================ */
@@ -627,4 +646,81 @@ footer {
     .login-box h1 {
         font-size: 1.2rem;
     }
+}
+/* ============================================================
+   LECTEUR PDF INTÉGRÉ
+   ============================================================ */
+.btn-lire {
+    flex-shrink: 0;
+    padding: 0.4rem 0.9rem;
+    background: #4a6cf7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.btn-lire:hover {
+    background: #3b5bdb;
+}
+
+.pdf-modal-contenu {
+    background: white;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 1000px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.pdf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fb;
+}
+
+.pdf-header h3 {
+    color: #4a6cf7;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.pdf-header .modal-fermer {
+    position: static;
+}
+
+.pdf-zone {
+    flex: 1;
+    overflow: hidden;
+    background: #525659;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.pdf-zone iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    pointer-events: auto;
+}
+
+.pdf-note {
+    text-align: center;
+    padding: 0.6rem;
+    font-size: 0.8rem;
+    color: #888;
+    background: #f8f9fb;
+    margin: 0;
+    border-top: 1px solid #e9ecef;
 }
