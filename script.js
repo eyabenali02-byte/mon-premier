@@ -368,8 +368,8 @@ window.addEventListener('firebaseReady', () => {
 
     // Bouton déconnexion flottant (sur le site)
     const logoutBtn = document.createElement('button');
-    logoutBtn.textContent = "🚪 Se déconnecter";
-    logoutBtn.style.cssText = `position:fixed;top:1rem;right:1rem;padding:0.5rem 1rem;background:#4a6cf7;color:white;border:none;border-radius:8px;cursor:pointer;z-index:50;font-size:0.85rem;`;
+logoutBtn.textContent = "🚪 Se déconnecter";
+logoutBtn.className = "logout-btn-flottant";
     logoutBtn.addEventListener('click', async () => { await signOut(auth); });
     document.body.appendChild(logoutBtn);
 
