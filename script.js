@@ -83,6 +83,47 @@ function ouvrirModal(cours) {
     modalFermer.focus();
     document.body.style.overflow = 'hidden';
 }
+// ============================================================
+// LECTEUR PDF INTÉGRÉ
+// ============================================================
+const pdfModal = document.getElementById('pdfModal');
+const pdfViewer = document.getElementById('pdfViewer');
+const pdfTitre = document.getElementById('pdfTitre');
+const pdfFermer = document.getElementById('pdfFermer');
+
+function ouvrirPDF(fichier, titre) {
+    pdfTitre.textContent = "📄 " + titre;
+    // Utilisation d'un blob pour cacher l'URL réelle
+    pdfViewer.src = fichier + "#toolbar=0&navpanes=0&scrollbar=1&view=FitH";
+    pdfModal.classList.add('ouvert');
+    document.body.style.overflow = 'hidden';
+}
+
+function fermerPDF() {
+    pdfModal.classList.remove('ouvert');
+    pdfViewer.src = ''; // Libère la mémoire
+    document.body.style.overflow = '';
+}
+
+// Déléguer les clics sur les boutons "Lire"
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-lire')) {
+        const fichier = e.target.dataset.fichier;
+        const titre = e.target.dataset.titre;
+        ouvrirPDF(fichier, titre);
+    }
+});
+
+pdfFermer.addEventListener('click', fermerPDF);
+pdfModal.addEventListener('click', (e) => {
+    if (e.target === pdfModal) fermerPDF();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && pdfModal.classList.contains('ouvert')) fermerPDF();
+});
+
+// 🚫 Désactiver le clic droit sur le lecteur PDF
+pdfViewer.addEventListener('contextmenu', (e) => e.preventDefault());
 
 function fermerModal() {
     modal.classList.remove('ouvert');
